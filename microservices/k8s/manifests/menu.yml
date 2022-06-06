@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: menu
+spec:
+  containers:
+  - name: menuk8s
+    image: 10.17.130.34:30500/menu:k8s
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 2227

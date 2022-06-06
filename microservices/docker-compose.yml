@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  api_gateway:
+    image: api_gateway
+    env_file:
+    - api_gateway/env
+  menu:
+    image: menu
+    env_file:
+    - menu/env
+  login:
+    image: login
+    env_file:
+    - login/env
+  fortune_cookie:
+    image: fortune_cookie
+    env_file:
+    - fortune_cookie/env

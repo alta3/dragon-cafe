@@ -1,0 +1,16 @@
+[Unit]
+Description=Dragon Cafe Webserver
+
+[Service]
+User=student
+Group=student
+
+WorkingDirectory=/home/student/dragon-cafe
+ExecStart=/bin/bash -c './dragon_monolith.py'
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=dragon-cafe
+
+[Install]
+WantedBy=multi-user.target

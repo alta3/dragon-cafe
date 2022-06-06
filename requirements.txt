@@ -1,0 +1,6 @@
+aiohttp
+aiosqlite
+bs4
+jinja2
+pillow
+requests

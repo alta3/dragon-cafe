@@ -1,0 +1,11 @@
+server {
+
+  listen 2224 dragon_cafe;
+  listen [::]:2224 dragon_cafe;
+
+  root /home/student/dragon-cafe;
+  location / {
+    proxy_pass http://localhost:2224/
+  }
+}
+  
