@@ -65,7 +65,7 @@ async def home(request) -> web.Response:
 
 async def logging_in(request):
     """
-    This is the page that gets POSTED to to allow a user to login
+    This is the page that gets POSTED to allow a user to login
     """
     print(request)
     if request.method == 'POST':
@@ -149,7 +149,7 @@ async def fortune(request) -> web.Response:
         "You will travel to many exotic places in your lifetime.",
         "Your ability for accomplishment will follow with success.",
         "Nothing astonishes men so much as common sense and plain dealing.",
-        "Its amazing how much good you can do if you dont care who gets the credit.",
+        "Its amazing how much good you can do if you do not care who gets the credit.",
         "Everyone agrees. You are the best.",
         "Life consist not in holding good cards, but in playing those you hold well.",
         "Jealousy doesn't open doors, it closes them!",
