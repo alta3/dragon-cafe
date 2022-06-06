@@ -5,7 +5,7 @@ Description=Dragon Cafe Service Registry
 User=root
 Group=root
 
-WorkingDirectory=/home/student/dragon-cafe/
+WorkingDirectory=/home/student/dragon-cafe
 ExecStart=/home/student/dragon-cafe/venv/bin/python3 service_registry.py
 
 StandardOutput=syslog
