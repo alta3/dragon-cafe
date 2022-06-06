@@ -20,19 +20,20 @@ import os
 import requests
 import socket
 
+
 HOST = os.getenv("DRAGON_HOST", "0.0.0.0")
 LOCAL_IP = socket.gethostbyname(socket.gethostname())
-PORT = os.getenv("DRAGON_PORT", 2225)
-REG_ADDR = os.getenv("SR_ADDRESS", "127.0.0.1")                                   
+PORT = os.getenv("DRAGON_PORT", 2224)
+REG_ADDR = os.getenv("SR_ADDRESS", "127.0.0.1")
 REG_PORT = os.getenv("SR_PORT", 55555)
-SERVICE = __file__.rstrip(".py")
+SERVICE = os.path.basename(__file__).rstrip(".py")
 
 
 class Page:
     def __init__(self, filename, templates_dir=Path("templates"), args={}, cookies={}):
         """
         Create a new instance of an html page to be returned
-        :param fillename: name of file found in the templates_dir
+        :param filename: name of file found in the templates_dir
         """
         self.path = templates_dir
         self.file = templates_dir / filename
@@ -50,14 +51,35 @@ class Page:
             return resp
 
 
+async def register(add_to_registry=True):
+    print(f"""
+    Service Registry {REG_ADDR}:{REG_PORT}
+
+    Adding to the Service Registry:
+
+    service name     {SERVICE}
+    service IP       {LOCAL_IP}
+    service port     {PORT}
+    """)
+    if add_to_registry:
+        r = requests.get(f"http://{REG_ADDR}:{REG_PORT}/add/{SERVICE}/{LOCAL_IP}/{PORT}")
+        print(r.status_code, r.text)
+
+
+async def unregister(remove_from_registry=True):
+    if remove_from_registry:
+        r = requests.get(f"http://{REG_ADDR}:{REG_PORT}/remove/{SERVICE}/{LOCAL_IP}/{PORT}")
+        print(r.status_code)
+
+
 def routes(app: web.Application) -> None:
     app.add_routes(
         [
             web.get("/", home),
             web.get("/login", login),
             web.post("/logging_in", logging_in),
-            web.get("/closed_cookie", closed_cookie),
             web.get("/fortune_cookie", fortune_cookie),
+            web.get("/fortune", fortune),
             web.get("/menu", menu)
         ]
     )
@@ -67,32 +89,32 @@ async def home(request) -> web.Response:
     """
     This is the home page for the website
     """
+    print(request)
     page = Page(filename="index.html")
     return page.render()
 
 
 async def logging_in(request):
-    print(f"logging_in: {request}")
+    """
+    This is the page that gets POSTED to to allow a user to login
+    """
+    print(request)
     if request.method == 'POST':
         data = await request.post()
         name = data['name']
         print("POSTED")
         print(name)
         # TODO - Add authentication logic
-        poodle = await login(request, name=name)
-        return poodle
+        get_login = await login(request, name=name)
+        return get_login
 
 
 async def login(request, name=None):
     """
     This is the login page for the website
     """
-    print(f"login: {request}")
-    # if request.query.get('name') is not None:
+    print(request)
     if name is not None:
-        print("We got something here!")
-        # TODO - Add authentication logic
-        resp = web.Response(text=name)
         page = Page(filename="hello.html", args={"name": name})
         print("Cookies Set?")
         return page.render()
@@ -103,19 +125,22 @@ async def login(request, name=None):
         return page.render()
 
 
-async def closed_cookie(request) -> web.Response:
+async def fortune_cookie(request) -> web.Response:
     """
-    This is the primary landing page for the fortune service.
+    This is the initial landing page for the fortune_cookie service.
+
+    Click on the link provided to retrieve your fortune!
     """
-    page = Page(filename="cookie.html")
+    print(request)
+    page = Page(filename="fortune_cookie.html")
     return page.render()
 
 
-async def fortune_cookie(request) -> web.Response:
+async def fortune(request) -> web.Response:
     """
-    This is the primary landing page for the fortune service.
+    This returns a randomly picked aphorism as a part of the fortune_cookie service.
     """
-
+    print(request)
     possible = [
         "People are naturally attracted to you.",
         "You learn from your mistakes... You will learn a lot today.",
@@ -168,16 +193,17 @@ async def fortune_cookie(request) -> web.Response:
         "Joys are often the shadows, cast by sorrows.",
         "Fortune favors the brave.",
     ]
-    fortune = random.choice(possible)
-    args = {"fortune": fortune}
-    page = Page(filename="seer.html", args=args)
+    fortune_choice = random.choice(possible)
+    args = {"fortune": fortune_choice}
+    page = Page(filename="fortune.html", args=args)
     return page.render()
 
 
 async def menu(request) -> web.Response:
     """
-    This will return
+    This will return the jinja2 templated menu.html file.
     """
+    print(request)
     food_items = [
         {"item": "General Tzo's Chicken", "description": "Yummy chicken on rice", "price": 12.99},
         {"item": "Kung Pao Beef", "description": "Spicy Beef on rice", "price": 13.99}
@@ -185,18 +211,6 @@ async def menu(request) -> web.Response:
     args = {"foods": food_items}
     page = Page(filename="menu.html", args=args)
     return page.render()
-
-
-async def register(handled: str = '') -> None:
-    print(f"This has been handled: {handled}")
-    r = requests.get(f"http://{REG_ADDR}:{REG_PORT}/add/{SERVICE}/{LOCAL_IP}/{PORT}")
-    print(r.status_code)
-
-
-async def unregister(handled: str = '') -> None:
-    print(f"This has been handled: {handled}")
-    r = requests.get(f"http://{REG_ADDR}:{REG_PORT}/remove/{SERVICE}/{LOCAL_IP}/{PORT}")
-    print(r.status_code)
 
 
 def main():
