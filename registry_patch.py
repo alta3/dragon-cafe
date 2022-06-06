@@ -1,8 +1,6 @@
-
 import os
 import socket
 import requests
-
 
 LOCAL_IP = socket.gethostbyname(socket.gethostname())
 LOCAL_PORT = os.getenv("DRAGON_PORT", 2224)
@@ -20,10 +18,8 @@ def unregister(service):
     print(r.status_code)
 
 
-register(__file__.rstrip(".py"))
+register(os.path.basename(__file__).rstrip(".py"))
 print("Added")
-unregister(__file__.rstrip(".py"))
+
+unregister(os.path.basename(__file__).rstrip(".py"))
 print("Deleted")
-
-
-
