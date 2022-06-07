@@ -61,7 +61,7 @@ def routes(app: web.Application) -> None:
 
 async def menu_v2(request):
     print(request)
-    r = requests.get("http://v2.dragon-cafe.com/menu")
+    r = requests.get("http://v2.dragon-cafe.com:2227/menu")
     return web.Response(text=r.text, content_type='text/html')
 
 
