@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      dragon: menu
+  template:
+    metadata:
+      name: menu-pod
+      labels:
+        dragon: menu
+    spec:
+      containers:
+      - image: node.registry/menu
+        name: menu
+        ports:
+        - containerPort: 2227
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      dragon: login
+  template:
+    metadata:
+      name: login-pod
+      labels:
+        dragon: login
+    spec:
+      containers:
+      - image: node.registry/login
+        name: login
+        ports:
+        - containerPort: 2228
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-cookie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      dragon: fortune
+  template:
+    metadata:
+      name: fortune-pod
+      labels:
+        dragon: fortune
+    spec:
+      containers:
+      - image: node.registry/fortune_cookie
+        name: fortune
+        ports:
+        - containerPort: 2229
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      dragon: api-gateway
+  template:
+    metadata:
+      name: api-gateway-pod
+      labels:
+        dragon: api-gateway
+    spec:
+      containers:
+      - image: node.registry/api_gateway
+        name: api-gateway
+        ports:
+        - containerPort: 2225
