@@ -1,11 +1,6 @@
-FROM python
-
-COPY service_registry.py /home/ubuntu/service_registry.py
-COPY requirements.txt /home/ubuntu/requirements.txt
-
-RUN pip3 install -r /home/ubuntu/requirements.txt
-
-CMD ["python3", "/home/ubuntu/service_registry.py"]
+FROM python:3.8-slim
+COPY service_registry.py .
+COPY requirements.txt .
+RUN python3 -m pip install -r requirements.txt
+CMD python3 service_registry.py
 EXPOSE 55555
-
-
